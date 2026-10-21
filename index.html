@@ -161,7 +161,7 @@ details.comp>summary .pr{color:var(--ui-muted);font-variant-numeric:tabular-nums
 .dprice{white-space:nowrap;font-size:16px;font-weight:600;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
 .daddr{font-size:13px;font-weight:600;line-height:1.3}
 .dmeta{font-size:11px;color:var(--gray);line-height:1.45}
-.trow{display:grid;grid-template-columns:minmax(0,2.3fr) .9fr 1fr 1fr .95fr minmax(0,1.15fr);gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--mist);font-size:11.5px;font-variant-numeric:tabular-nums}
+.trow{display:grid;grid-template-columns:minmax(0,2.6fr) 1fr 1.1fr 1.1fr 1fr;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--mist);font-size:11.5px;font-variant-numeric:tabular-nums}
 .trow.th{border-bottom:1px solid var(--ink);padding-top:0;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gray)}
 .trow b{font-weight:600}
 .trow .a{min-width:0}
@@ -277,7 +277,7 @@ function card(d){
   const meta=[[d.town,d.zip].filter(Boolean).join(', NY ').replace(/^, NY /,'NY '),SIDE[d.side]].filter(Boolean).join(' · ');
   return `<div class="dcard"><div class="dphoto" style="${d.photo?`background-image:url('${d.photo}')`:''}">${d.photo?'':'Photo'}</div>
     <div class="dtop"><span class="pill ${d.status}">${label}</span><span class="dprice">${esc(money(d.price))||'<span class="empty">$—</span>'}</span></div>
-    <div><div class="daddr">${esc(d.address)}</div><div class="dmeta">${esc(meta)}${d.agent?'<br>'+esc(d.agent):''}</div></div></div>`;
+    <div><div class="daddr">${esc(d.address)}</div><div class="dmeta">${esc(meta)}</div></div></div>`;
 }
 function cardSection(title,sub,list){
   const out=[];
@@ -286,10 +286,10 @@ function cardSection(title,sub,list){
   }
   return out;
 }
-const TH=`<div class="trow th"><span>Property</span><span>Status</span><span class="r">Price</span><span>Date</span><span>Side</span><span>Agent</span></div>`;
+const TH=`<div class="trow th"><span>Property</span><span>Status</span><span class="r">Price</span><span>Date</span><span>Side</span></div>`;
 function row(d){
   const label={sold:'Sold',pending:'Under contract',active:'Active'}[d.status];
-  return `<div class="trow"><div class="a"><b>${esc(d.address)}</b><small>${esc([d.town,d.zip].filter(Boolean).join(', NY '))}</small></div><span>${label}</span><span class="r"><b>${esc(money(d.price))}</b></span><span>${esc(fmtDate(d.date))}</span><span>${esc((SIDE[d.side]||'').replace(' side','').replace(' sides',' sides'))}</span><span>${esc(d.agent)}</span></div>`;
+  return `<div class="trow"><div class="a"><b>${esc(d.address)}</b><small>${esc([d.town,d.zip].filter(Boolean).join(', NY '))}</small></div><span>${label}</span><span class="r"><b>${esc(money(d.price))}</b></span><span>${esc(fmtDate(d.date))}</span><span>${esc((SIDE[d.side]||'').replace(' side','').replace(' sides',' sides'))}</span></div>`;
 }
 function inMap(d){return d.lat!=null&&d.lng!=null&&!isNaN(d.lat);}
 function proj(d){const x=(d.lng-MAP.LON0)*MAP.k*MAP.s, y=(MAP.LAT1-d.lat)*MAP.s; return {x,y,ok:x>=0&&x<=MAP.W&&y>=0&&y<=MAP.H};}
@@ -343,7 +343,7 @@ function dealForm(d,i){
     ${inp(`deals.${i}.address`,'Street address')}
     <div class="grid2">${inp(`deals.${i}.town`,'Town')}${inp(`deals.${i}.zip`,'Zip',{mode:'numeric'})}</div>
     <div class="grid2">${inp(`deals.${i}.price`,price,{mode:'numeric'})}${inp(`deals.${i}.date`,DATE_LABEL[d.status]+' date',{type:'date'})}</div>
-    <div class="grid2"><div class="field"><label for="sd_${d.id}">Side</label><select id="sd_${d.id}" data-side="${i}">${Object.entries(SIDE).map(([k,v])=>`<option value="${k}" ${d.side===k?'selected':''}>${v}</option>`).join('')}</select></div>${inp(`deals.${i}.agent`,'Agent',{list:'agents'})}</div>
+    <div class="grid2" style="grid-template-columns:1fr"><div class="field"><label for="sd_${d.id}">Side</label><select id="sd_${d.id}" data-side="${i}">${Object.entries(SIDE).map(([k,v])=>`<option value="${k}" ${d.side===k?'selected':''}>${v}</option>`).join('')}</select></div></div>
     <div class="field"><span class="lbl">Photo ${d.status==='sold'?'(shows for the 3 most recent sales)':d.status==='pending'?'(shows for the 3 most recent)':'(always shows)'}</span><div class="photo"><div class="thumb" style="${d.photo?`background-image:url('${d.photo}')`:''}"></div>
       <label class="btn btn-line btn-small" for="ph_${d.id}">${d.photo?'Replace':'Upload'}</label><input type="file" accept="image/*" id="ph_${d.id}" data-photo="${i}" hidden>${d.photo?`<button type="button" class="btn btn-line btn-small btn-danger" data-clearphoto="${i}">Remove</button>`:''}</div></div>
     <div class="dealtools">${locText(d)}<button type="button" class="btn btn-line btn-small" data-locate="${i}">${inMap(d)?'Find again':'Find on map'}</button></div>
@@ -471,7 +471,7 @@ $('#savePdf').addEventListener('click',async()=>{
   btn.disabled=false;btn.textContent=label;
 });
 
-const OWNER=location.hash.replace('#','')==='edit'; $('#editBtn').hidden=!OWNER;
+const showEdit=()=>{$('#editBtn').hidden=location.hash.replace('#','')!=='edit';}; showEdit(); addEventListener('hashchange',showEdit);
 loadPublished();
 document.fonts.ready.then(render);
 })();
