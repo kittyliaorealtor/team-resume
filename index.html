@@ -139,7 +139,7 @@ details.comp>summary .pr{color:var(--ui-muted);font-variant-numeric:tabular-nums
 .rhead h1 em{font-style:normal;font-weight:400;color:var(--gold-soft);font-size:.46em;letter-spacing:.2em;text-transform:uppercase;margin-left:12px}
 .rhead .ct{text-align:right;font-size:11.5px;line-height:1.6;color:#D8D5CE}
 .pbody{flex:1;min-height:0;overflow:hidden;padding:22px 56px 6px;display:flex;flex-direction:column;gap:16px}
-.pbody>div:has(>.clist:only-child){margin-top:-16px}
+.pbody>div:has(>.clist:only-child){margin-top:-10px}
 .pfoot{flex:none;height:44px;margin:0 56px;border-top:1px solid var(--mist);display:flex;align-items:center;justify-content:space-between;font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--gray)}
 .pfoot b{color:var(--ink);font-weight:500}
 
@@ -316,18 +316,17 @@ function render(){
   const vol=P.sold.reduce((s,d)=>s+(parseFloat(digits(d.price))||0),0);
   const blocks=[{html:`<div class="stats"><div><b>${P.sold.length}</b><span>Homes sold</span></div><div><b>${vol?big(vol):'$0'}</b><span>Sales volume</span></div><div><b>${P.pending.length}</b><span>Under contract</span></div><div><b>${P.active.length}</b><span>Active listings</span></div></div>`}];
   if(P.active.length) blocks.push(...cardSection('Active listings',`${P.active.length} on the market`,P.active));
-  if(P.featPending.length) blocks.push(...cardSection('Under contract','Most recent',P.featPending));
-  if(P.featSold.length) blocks.push(...cardSection('Recently sold','Most recent',P.featSold));
+  /* each status is one section: photo cards for the newest, then the rest as a compact list right underneath */
   const compact=(title,list)=>{
-    const head=`<div class="h2"><span>${esc(title)}</span><small>${list.length} ${list.length===1?'home':'homes'} · newest first</small></div>`;
     const headCont=`<div class="h2"><span>${esc(title)}</span><small>continued</small></div>`;
     for(let i=0;i<list.length;i+=3){
       const cells=list.slice(i,i+3).map(d=>`<div class="citem"><span>${esc(d.address)}${d.town?`<em>, ${esc(d.town)}</em>`:''}</span><b>${esc(money(d.price))}</b></div>`).join('');
-      blocks.push({html:`<div>${i?'':head}<div class="clist">${cells}</div></div>`,head:headCont});
+      blocks.push({html:`<div><div class="clist">${cells}</div></div>`,head:headCont});
     }
   };
-  if(P.restPending.length) compact('Also under contract',P.restPending);
-  if(P.restSold.length) compact('More homes sold',P.restSold);
+  const n=k=>`${k} ${k===1?'home':'homes'}`;
+  if(P.pending.length){blocks.push(...cardSection('Under contract',n(P.pending.length)+' · newest first',P.featPending)); compact('Under contract',P.restPending);}
+  if(P.sold.length){blocks.push(...cardSection('Sold',n(P.sold.length)+' · newest first',P.featSold)); compact('Sold',P.restSold);}
   if(!data.deals.some(d=>d.address)) blocks.push({html:`<div class="emptystate">No deals have been published yet.</div>`});
   blocks.push({html:mapBlock(data)});
   flowAll(data,blocks);
