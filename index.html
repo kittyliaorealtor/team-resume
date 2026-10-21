@@ -148,6 +148,8 @@ details.comp>summary .pr{color:var(--ui-muted);font-variant-numeric:tabular-nums
 .stats div+div{border-left:1px solid var(--mist)}
 .stats b{font-size:26px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 .stats span{font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--gray)}
+.pbody>.secstart{margin-top:22px}
+.pbody>.secstart:first-child{margin-top:0}
 .h2{display:flex;align-items:baseline;justify-content:space-between;border-bottom:1px solid var(--ink);padding-bottom:7px;margin-bottom:12px}
 .h2 span{font-size:11px;letter-spacing:.28em;text-transform:uppercase;font-weight:600}
 .h2 small{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gray)}
@@ -288,7 +290,7 @@ function card(d){
 function cardSection(title,sub,list){
   const out=[];
   for(let i=0;i<list.length;i+=3){
-    out.push({html:`<div>${i?'':`<div class="h2"><span>${esc(title)}</span><small>${esc(sub)}</small></div>`}<div class="cards">${list.slice(i,i+3).map(card).join('')}</div></div>`});
+    out.push({html:`<div${i?'':' class="secstart"'}>${i?'':`<div class="h2"><span>${esc(title)}</span><small>${esc(sub)}</small></div>`}<div class="cards">${list.slice(i,i+3).map(card).join('')}</div></div>`});
   }
   return out;
 }
@@ -305,7 +307,7 @@ function mapBlock(data){
   const order={sold:0,pending:1,active:2}; placed.sort((a,b)=>order[a.d.status]-order[b.d.status]);
   const dots=placed.map(p=>`<div class="mdot ${p.d.status}" style="left:${p.x.toFixed(1)}px;top:${p.y.toFixed(1)}px"></div>`).join('');
   const hasSold=placed.some(p=>p.d.status==='sold'),hasOther=placed.some(p=>p.d.status!=='sold');
-  return `<div><div class="h2"><span>Where we’ve done business</span><small>Long Island · New York City · Yonkers</small></div>
+  return `<div class="secstart"><div class="h2"><span>Where we’ve done business</span><small>Long Island · New York City · Yonkers</small></div>
     <div class="mapwrap"><img src="${MAP_IMG}" alt="">${dots}</div>
     <div class="legend">${hasSold?'<span><i style="background:var(--ink)"></i>Sold</span>':''}${hasOther?'<span><i style="background:var(--gold)"></i>Active or under contract</span>':''}</div>
     <p class="mnote">${placed.length} ${placed.length===1?'home':'homes'} shown</p></div>`;
