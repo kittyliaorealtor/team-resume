@@ -139,6 +139,7 @@ details.comp>summary .pr{color:var(--ui-muted);font-variant-numeric:tabular-nums
 .rhead h1 em{font-style:normal;font-weight:400;color:var(--gold-soft);font-size:.46em;letter-spacing:.2em;text-transform:uppercase;margin-left:12px}
 .rhead .ct{text-align:right;font-size:11.5px;line-height:1.6;color:#D8D5CE}
 .pbody{flex:1;min-height:0;overflow:hidden;padding:22px 56px 6px;display:flex;flex-direction:column;gap:16px}
+.pbody>div:has(>.clist:only-child){margin-top:-16px}
 .pfoot{flex:none;height:44px;margin:0 56px;border-top:1px solid var(--mist);display:flex;align-items:center;justify-content:space-between;font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--gray)}
 .pfoot b{color:var(--ink);font-weight:500}
 
@@ -167,6 +168,11 @@ details.comp>summary .pr{color:var(--ui-muted);font-variant-numeric:tabular-nums
 .trow .a{min-width:0}
 .trow .a small{display:block;color:var(--gray);font-size:10.5px;margin-top:1px}
 .trow .r{text-align:right}
+.clist{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:16px}
+.citem{display:flex;justify-content:space-between;gap:6px;padding:5px 0;border-bottom:1px solid var(--mist);font-size:10px;line-height:1.3;min-width:0}
+.citem span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.citem em{font-style:normal;color:var(--gray)}
+.citem b{font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}
 .mapwrap{position:relative;width:704px;height:207px}
 .mapwrap img{position:absolute;inset:0;width:704px;height:207px;max-width:none}
 .mdot{position:absolute;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;border:1.5px solid #fff}
@@ -267,7 +273,7 @@ function flowAll(data,blocks){
     const node=el(b.html); body.appendChild(node);
     if(body.scrollHeight>body.clientHeight+1&&body.children.length>1){
       node.remove(); body=makePage(data,true);
-      if(b.head) body.appendChild(el(b.head));
+      if(b.head&&!node.querySelector('.h2')) body.appendChild(el(b.head));
       body.appendChild(node);
     }
   }
@@ -312,10 +318,16 @@ function render(){
   if(P.active.length) blocks.push(...cardSection('Active listings',`${P.active.length} on the market`,P.active));
   if(P.featPending.length) blocks.push(...cardSection('Under contract','Most recent',P.featPending));
   if(P.featSold.length) blocks.push(...cardSection('Recently sold','Most recent',P.featSold));
-  const rest=P.restPending.concat(P.restSold);
-  if(rest.length){
-    rest.forEach((d,i)=>blocks.push({html:i?row(d):`<div><div class="h2"><span>Transaction history</span><small>Newest first</small></div>${TH}${row(d)}</div>`,head:TH}));
-  }
+  const compact=(title,list)=>{
+    const head=`<div class="h2"><span>${esc(title)}</span><small>${list.length} ${list.length===1?'home':'homes'} · newest first</small></div>`;
+    const headCont=`<div class="h2"><span>${esc(title)}</span><small>continued</small></div>`;
+    for(let i=0;i<list.length;i+=3){
+      const cells=list.slice(i,i+3).map(d=>`<div class="citem"><span>${esc(d.address)}${d.town?`<em>, ${esc(d.town)}</em>`:''}</span><b>${esc(money(d.price))}</b></div>`).join('');
+      blocks.push({html:`<div>${i?'':head}<div class="clist">${cells}</div></div>`,head:headCont});
+    }
+  };
+  if(P.restPending.length) compact('Also under contract',P.restPending);
+  if(P.restSold.length) compact('More homes sold',P.restSold);
   if(!data.deals.some(d=>d.address)) blocks.push({html:`<div class="emptystate">No deals have been published yet.</div>`});
   blocks.push({html:mapBlock(data)});
   flowAll(data,blocks);
