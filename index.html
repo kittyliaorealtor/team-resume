@@ -247,7 +247,7 @@ function pick(data){
   const ok=d=>d.address;
   const by=st=>sortDesc(data.deals.filter(d=>d.status===st&&ok(d)));
   const active=by('active'),pending=by('pending'),sold=by('sold');
-  return {active,pending,sold,featPending:pending,featSold:sold.slice(0,3),restPending:[],restSold:sold.slice(3)};
+  return {active,pending,sold,featPending:pending.slice(0,3),featSold:sold.slice(0,3),restPending:pending.slice(3),restSold:sold.slice(3)};
 }
 
 /* ---------- report ---------- */
@@ -355,7 +355,7 @@ function dealForm(d,i){
     <div class="grid2">${inp(`deals.${i}.town`,'Town')}${inp(`deals.${i}.zip`,'Zip',{mode:'numeric'})}</div>
     <div class="grid2">${inp(`deals.${i}.price`,price,{mode:'numeric'})}${inp(`deals.${i}.date`,DATE_LABEL[d.status]+' date',{type:'date'})}</div>
     <div class="grid2" style="grid-template-columns:1fr"><div class="field"><label for="sd_${d.id}">Side</label><select id="sd_${d.id}" data-side="${i}">${Object.entries(SIDE).map(([k,v])=>`<option value="${k}" ${d.side===k?'selected':''}>${v}</option>`).join('')}</select></div></div>
-    <div class="field"><span class="lbl">Photo ${d.status==='sold'?'(shows for the 3 most recent sales)':'(always shows)'}</span><div class="photo"><div class="thumb" style="${d.photo?`background-image:url('${d.photo}')`:''}"></div>
+    <div class="field"><span class="lbl">Photo ${d.status==='sold'?'(shows for the 3 most recent sales)':d.status==='pending'?'(shows for the 3 most recent)':'(always shows)'}</span><div class="photo"><div class="thumb" style="${d.photo?`background-image:url('${d.photo}')`:''}"></div>
       <label class="btn btn-line btn-small" for="ph_${d.id}">${d.photo?'Replace':'Upload'}</label><input type="file" accept="image/*" id="ph_${d.id}" data-photo="${i}" hidden>${d.photo?`<button type="button" class="btn btn-line btn-small btn-danger" data-clearphoto="${i}">Remove</button>`:''}</div></div>
     <div class="dealtools">${locText(d)}<button type="button" class="btn btn-line btn-small" data-locate="${i}">${inMap(d)?'Find again':'Find on map'}</button></div>
     <div class="comptools"><button type="button" class="btn btn-line btn-small btn-danger" data-del="${i}">${pendingDel===d.id?'Click again to delete':'Delete deal'}</button></div>
