@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MARS Team Resume</title>
+<link rel="icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<style>
+/* Layout: the printable resume fills the screen; loggers open an edit panel on the left.
+   Single light theme on purpose: this is a printed credentials sheet in black, white, gold and gray. */
+:root{
+  color-scheme: light;
+  --ink:#0F0F0E; --paper:#FFFFFF; --gold:#B08D57; --gold-soft:#D9C7A4; --gray:#7C7972; --mist:#EFEDE8;
+  --ui-bg:#E7E5E0; --ui-panel:#FAFAF8; --ui-line:#D9D6CF; --ui-text:#1C1B19; --ui-muted:#6E6B64; --ok:#2F6B45; --warn:#9A4B1F;
+  /* Helvetica where the computer has it (Macs, iPhones); Arimo, a free metric match, everywhere else */
+  --display:"Helvetica Neue",Helvetica,Arimo,Arial,sans-serif;
+  --sans:"Helvetica Neue",Helvetica,Arimo,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0}
+[hidden]{display:none!important}
+img{max-width:100%}
+html,body{height:100%}
+body{background:var(--ui-bg);color:var(--ui-text);font-family:var(--sans);font-size:14px}
+/* ---------- App shell ---------- */
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--ink);color:#fff;
+  padding-block:12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--ink)}
+.brand{display:flex;flex-direction:column;gap:2px;margin-right:auto}
+.brand b{font-family:var(--display);font-weight:700;font-size:19px;letter-spacing:-.01em}
+.brand span{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-soft)}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+.btn{font:inherit;font-size:13px;font-weight:500;border-radius:2px;padding:8px 14px;cursor:pointer;border:1px solid transparent;line-height:1.2}
+.btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.btn-gold{background:var(--gold);color:var(--ink)}
+.btn-gold:hover{background:#c29f69}
+.btn-ghost{background:transparent;color:#fff;border-color:#4a4843}
+.btn-ghost:hover{border-color:var(--gold-soft)}
+.btn-line{background:#fff;color:var(--ui-text);border-color:var(--ui-line)}
+.btn-line:hover{border-color:var(--gold)}
+.btn-small{padding:5px 10px;font-size:12px}
+.btn-danger{color:var(--warn)}
+.btn[disabled]{opacity:.5;cursor:default}
+
+.app{display:grid;grid-template-columns:minmax(0,430px) minmax(0,1fr);min-height:calc(100% - 64px)}
+.form{background:var(--ui-panel);border-right:1px solid var(--ui-line);
+  padding-block:16px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:16px;
+  overflow:auto;max-height:calc(100vh - 64px);position:sticky;top:64px}
+.preview{padding:24px;overflow:auto;min-width:0}
+@media (max-width:860px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .form{max-height:none;position:static;border-right:0;border-bottom:1px solid var(--ui-line);padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .preview{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+}
+
+.notice{background:#F4EBDA;border:1px solid var(--gold-soft);padding:10px 12px;font-size:13px;line-height:1.45;margin-bottom:14px;display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
+.notice p{margin:0}
+
+details.sec{border-top:1px solid var(--ui-line)}
+details.sec:last-of-type{border-bottom:1px solid var(--ui-line)}
+details.sec>summary{list-style:none;cursor:pointer;padding:14px 2px;display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+details.sec>summary::-webkit-details-marker{display:none}
+details.sec>summary h2{margin:0;font-family:var(--display);font-weight:600;font-size:16px}
+details.sec>summary small{color:var(--ui-muted);font-size:12px}
+details.sec>summary::after{content:"+";font-size:18px;color:var(--gold);margin-left:8px}
+details.sec[open]>summary::after{content:"–"}
+.secbody{display:flex;flex-direction:column;gap:12px;padding-bottom:18px}
+
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field label,.lbl{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ui-muted);font-weight:500}
+.field input,.field textarea,.field select,.row input{font:inherit;font-size:14px;color:var(--ui-text);background:#fff;border:1px solid var(--ui-line);border-radius:2px;padding:8px 10px;width:100%;min-width:0}
+.field textarea{min-height:84px;resize:vertical;line-height:1.45}
+.field input:focus,.field textarea:focus,.field select:focus,.row input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 2px rgba(176,141,87,.2)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.hint{font-size:12px;color:var(--ui-muted);line-height:1.45;margin:0}
+.toggle{display:flex;align-items:center;gap:8px;font-size:13px}
+.toggle input{width:16px;height:16px;accent-color:var(--gold)}
+
+.rep{display:flex;flex-direction:column;gap:6px}
+.row{display:grid;gap:6px;align-items:center}
+.row.spec{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr) auto}
+.row.hl{grid-template-columns:minmax(0,1fr) auto}
+.row.mk{grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr) minmax(0,.8fr) auto}
+.x{border:0;background:none;color:var(--ui-muted);font-size:18px;cursor:pointer;padding:2px 6px;line-height:1}
+.x:hover{color:var(--warn)}
+.x:focus-visible{outline:2px solid var(--gold)}
+.photo{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.photo .thumb{width:64px;height:44px;background:var(--mist) center/cover no-repeat;border:1px solid var(--ui-line)}
+
+.compgroup{display:flex;flex-direction:column;gap:8px}
+.compgroup h3{margin:6px 0 0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ui-muted);font-weight:600;display:flex;justify-content:space-between;align-items:center}
+details.comp{background:#fff;border:1px solid var(--ui-line)}
+details.comp>summary{list-style:none;cursor:pointer;padding:9px 10px;display:flex;gap:8px;align-items:center}
+details.comp>summary::-webkit-details-marker{display:none}
+details.comp>summary .addr{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+details.comp>summary .pr{color:var(--ui-muted);font-variant-numeric:tabular-nums;font-size:13px}
+.compbody{padding:4px 10px 12px;display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--mist)}
+.comptools{display:flex;gap:6px;flex-wrap:wrap}
+.dot{width:8px;height:8px;border-radius:50%;flex:none}
+.dot.sold{background:var(--ink)}
+.dot.pending{background:var(--gold)}
+.dot.active{background:#fff;border:1.5px solid var(--ink)}
+.importbox{border:1px dashed var(--gold-soft);background:#fff;padding:12px;display:flex;flex-direction:column;gap:8px}
+.result{font-size:13px;line-height:1.45;margin:0}
+.result.ok{color:var(--ok)}
+.result.bad{color:var(--warn)}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;font-size:13px;border-left:3px solid var(--gold);max-width:calc(100% - 32px);z-index:40}
+.pagecount{font-size:12px;color:var(--ui-muted);letter-spacing:.12em;text-transform:uppercase;margin:0 0 14px}
+
+
+.app.view{grid-template-columns:minmax(0,1fr)}
+.app.view .form{display:none}
+.navlink{color:var(--gold-soft);font-size:12px;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;border-bottom:1px solid transparent}
+.navlink:hover{border-bottom-color:var(--gold-soft)}
+.status{font-size:12px;color:var(--ui-muted);margin:0 0 14px;letter-spacing:.04em}
+.status b{color:var(--ui-text);font-weight:600}
+.dealtools{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.loc{font-size:12px}
+.loc.ok{color:var(--ok)}
+.loc.bad{color:var(--warn)}
+.steps{margin:6px 0 0;padding-left:18px;font-size:13px;line-height:1.55}
+
+/* ---------- Resume pages (8.5 x 11 in at 96 dpi) ---------- */
+#pages{--s:1;display:flex;flex-direction:column;align-items:center;gap:22px}
+.pagewrap{width:calc(816px * var(--s));height:calc(1056px * var(--s));flex:none;box-shadow:0 6px 24px rgba(15,15,14,.14)}
+.page{width:816px;height:1056px;transform:scale(var(--s));transform-origin:0 0;background:var(--paper);color:var(--ink);font-family:var(--sans);position:relative;overflow:hidden;display:flex;flex-direction:column}
+.rhead{background:var(--ink);color:#fff;padding:26px 56px 24px;display:flex;align-items:center;gap:22px;flex:none;position:relative}
+.rhead::after{content:"";position:absolute;left:56px;right:56px;bottom:0;height:2px;background:var(--gold)}
+.rhead img{height:54px;width:auto}
+.rhead .t{flex:1;min-width:0}
+.rhead .eyebrow{font-size:10.5px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);font-weight:500}
+.rhead h1{margin:6px 0 0;font-weight:500;font-size:28px;letter-spacing:-.015em;line-height:1.1}
+.rhead h1 em{font-style:normal;font-weight:400;color:var(--gold-soft);font-size:.46em;letter-spacing:.2em;text-transform:uppercase;margin-left:12px}
+.rhead .ct{text-align:right;font-size:11.5px;line-height:1.6;color:#D8D5CE}
+.pbody{flex:1;min-height:0;overflow:hidden;padding:22px 56px 6px;display:flex;flex-direction:column;gap:16px}
+.pfoot{flex:none;height:44px;margin:0 56px;border-top:1px solid var(--mist);display:flex;align-items:center;justify-content:space-between;font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--gray)}
+.pfoot b{color:var(--ink);font-weight:500}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--mist)}
+.stats div{padding:16px 18px;display:flex;flex-direction:column;gap:6px}
+.stats div+div{border-left:1px solid var(--mist)}
+.stats b{font-size:26px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.stats span{font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--gray)}
+.h2{display:flex;align-items:baseline;justify-content:space-between;border-bottom:1px solid var(--ink);padding-bottom:7px;margin-bottom:12px}
+.h2 span{font-size:11px;letter-spacing:.28em;text-transform:uppercase;font-weight:600}
+.h2 small{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gray)}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.dcard{display:flex;flex-direction:column;gap:8px;min-width:0}
+.dphoto{height:126px;background:var(--mist) center/cover no-repeat;display:flex;align-items:center;justify-content:center;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:#B9B5AD}
+.dtop{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.pill{white-space:nowrap;font-size:8px;letter-spacing:.18em;text-transform:uppercase;padding:4px 8px 3px;font-weight:600;line-height:1}
+.pill.sold{background:var(--ink);color:var(--gold-soft)}
+.pill.pending{background:var(--gold);color:var(--ink)}
+.pill.active{background:#fff;color:var(--ink);border:1px solid var(--ink);padding:3px 7px 2px}
+.dprice{white-space:nowrap;font-size:16px;font-weight:600;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.daddr{font-size:13px;font-weight:600;line-height:1.3}
+.dmeta{font-size:11px;color:var(--gray);line-height:1.45}
+.trow{display:grid;grid-template-columns:minmax(0,2.3fr) .9fr 1fr 1fr .95fr minmax(0,1.15fr);gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--mist);font-size:11.5px;font-variant-numeric:tabular-nums}
+.trow.th{border-bottom:1px solid var(--ink);padding-top:0;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gray)}
+.trow b{font-weight:600}
+.trow .a{min-width:0}
+.trow .a small{display:block;color:var(--gray);font-size:10.5px;margin-top:1px}
+.trow .r{text-align:right}
+.mapwrap{position:relative;width:704px;height:207px}
+.mapwrap img{position:absolute;inset:0;width:704px;height:207px;max-width:none}
+.mdot{position:absolute;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;border:1.5px solid #fff}
+.mdot.sold{background:var(--ink)}
+.mdot.pending,.mdot.active{background:var(--gold)}
+.legend{display:flex;gap:18px;justify-content:center;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--gray);margin-top:10px}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+.mnote{font-size:10.5px;color:var(--gray);text-align:center;margin:6px 0 0}
+.empty{color:#B9B5AD}
+.emptystate{border:1px dashed var(--ui-line);padding:28px;text-align:center;color:var(--gray);font-size:13px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="brand"><b>Team Resume</b><span>The MARS Team</span></div>
+  <div class="actions">
+    <button class="btn btn-gold" id="savePdf" type="button">Save PDF</button>
+    <button class="btn btn-ghost" id="editBtn" type="button" hidden>Add or edit deals</button>
+  </div>
+</div>
+<div class="app view" id="app">
+  <aside class="form" id="form" aria-label="Deal editor"></aside>
+  <main class="preview" id="preview">
+    <p class="status" id="status">Loading the team's deals…</p>
+    <div id="pages"></div>
+  </main>
+</div>
+<div class="toast" id="toast" hidden></div>
+<script src="lib/papaparse.min.js"></script>
+<script src="lib/html2canvas.min.js"></script>
+<script src="lib/jspdf.umd.min.js"></script>
+<script>
+const MAP={"svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 704 207\" width=\"1408\" height=\"414\"><defs><clipPath id=\"c\"><rect width=\"704\" height=\"207\"/></clipPath></defs><g clip-path=\"url(#c)\"><path d=\"M147.0 163.2 L162.3 104.1 L162.2 102.8 L162.0 100.6 L149.1 90.2 L143.0 82.5 L147.1 74.9 L147.0 72.7 L154.4 62.9 L154.9 61.4 L153.7 58.2 L158.6 56.4 L169.4 61.3 L170.8 60.7 L175.0 58.7 L175.5 53.4 L179.3 47.9 L181.3 45.8 L183.3 45.4 L186.0 45.9 L190.4 44.1 L192.3 42.4 L199.5 39.4 L200.6 39.2 L205.8 41.9 L214.0 39.8 L215.2 40.3 L219.5 38.3 L220.3 36.6 L232.5 69.9 L236.3 96.2 L240.9 128.3 L241.3 131.3 L241.0 133.1 L240.7 136.8 L241.2 154.3 L233.6 156.7 L201.7 164.1 L195.6 163.0 L187.9 162.6 L177.7 164.5 L162.1 164.2 L146.8 163.9 L147.0 163.2ZM114.3 122.2 L112.9 122.6 L108.4 126.3 L106.5 127.0 L104.2 122.0 L102.0 119.1 L99.3 117.0 L98.7 112.8 L97.1 109.9 L94.8 109.1 L92.0 106.3 L89.9 105.6 L88.0 106.4 L87.9 104.2 L88.8 103.2 L89.8 101.0 L92.9 96.2 L93.8 95.0 L95.0 94.1 L95.4 93.4 L94.6 93.1 L94.5 92.3 L95.5 90.6 L97.5 91.5 L100.8 87.8 L102.5 86.2 L101.9 84.2 L105.5 85.6 L107.7 86.4 L108.3 87.5 L109.8 87.8 L113.7 87.7 L114.9 85.2 L116.1 83.8 L125.3 81.6 L130.8 80.9 L135.8 82.8 L138.0 82.4 L139.3 84.7 L140.8 84.5 L143.0 82.5 L149.1 90.2 L162.0 100.6 L162.2 102.8 L162.3 104.1 L147.0 163.2 L147.3 161.6 L141.1 161.5 L133.6 163.4 L132.0 163.8 L124.2 166.6 L111.5 172.7 L95.6 178.6 L95.6 174.8 L96.1 173.0 L95.3 171.2 L94.5 170.7 L119.8 162.3 L116.7 137.5 L118.1 134.0 L115.1 127.2 L114.3 122.2ZM609.3 -31.7 L610.4 -33.2 L610.9 -35.8 L623.0 -30.7 L623.9 -27.8 L622.2 -14.4 L619.7 -12.8 L619.3 -21.0 L617.6 -25.0 L616.7 -25.9 L612.6 -27.5 L607.3 -27.3 L606.5 -28.0 L606.3 -29.3 L606.9 -30.4 L609.3 -31.7ZM663.1 -100.3 L667.9 -101.6 L665.4 -98.0 L662.3 -96.4 L657.7 -94.4 L653.0 -92.2 L648.5 -89.0 L646.3 -87.6 L636.5 -86.5 L637.0 -88.6 L638.6 -91.5 L640.3 -94.4 L641.6 -95.6 L645.0 -95.4 L649.5 -98.3 L652.7 -97.9 L660.4 -99.7 L663.1 -100.3ZM232.5 69.9 L220.3 36.6 L221.8 29.3 L223.6 27.7 L225.1 28.8 L226.8 29.7 L229.8 31.0 L230.7 31.1 L231.9 31.2 L235.1 31.7 L237.3 32.0 L239.5 33.9 L239.5 34.5 L239.7 37.1 L246.2 37.5 L247.1 35.7 L247.0 29.3 L247.7 24.8 L250.0 24.3 L255.2 31.0 L257.7 33.2 L261.4 35.1 L263.5 35.6 L263.9 34.9 L267.5 34.0 L277.9 35.9 L296.6 43.2 L319.5 34.3 L320.3 32.0 L320.7 24.1 L321.8 20.2 L330.5 18.1 L338.7 17.7 L349.5 21.8 L350.4 20.9 L363.1 20.1 L374.8 20.3 L386.5 21.6 L393.8 21.5 L411.6 18.9 L426.4 20.6 L430.4 16.8 L443.4 12.9 L450.5 11.4 L457.5 12.2 L465.9 11.1 L480.2 8.4 L485.8 3.9 L487.1 1.7 L490.3 0.1 L498.3 -6.6 L511.0 -12.1 L515.7 -17.7 L520.1 -24.9 L527.9 -25.6 L533.8 -28.7 L545.5 -42.8 L552.0 -44.4 L555.1 -45.4 L564.0 -51.1 L567.5 -52.2 L569.2 -50.8 L570.6 -50.5 L577.1 -53.1 L579.1 -52.5 L579.2 -51.3 L574.7 -44.1 L571.4 -40.8 L561.4 -34.7 L561.5 -42.2 L559.7 -44.3 L557.9 -44.6 L556.3 -44.1 L553.9 -42.2 L551.4 -37.7 L551.5 -32.7 L556.6 -25.8 L562.1 -23.0 L567.1 -22.7 L568.1 -21.3 L566.3 -18.0 L569.0 -11.9 L572.7 -8.3 L578.2 -9.3 L581.6 -9.2 L585.0 -7.8 L589.5 -4.6 L592.7 -4.7 L594.8 -5.9 L595.8 -6.9 L597.2 -9.8 L600.6 -12.5 L601.3 -12.7 L603.1 -12.0 L607.9 -7.4 L608.5 -4.2 L607.8 -1.5 L613.8 7.6 L615.9 9.8 L617.9 10.7 L619.8 10.8 L623.3 8.9 L624.2 6.2 L624.4 5.1 L625.3 4.1 L629.5 4.0 L630.5 5.7 L631.3 5.6 L632.3 5.1 L632.9 3.9 L632.3 1.6 L632.2 -0.2 L633.5 -1.0 L636.8 -0.3 L642.7 -3.1 L647.2 -7.4 L656.4 -10.4 L658.1 -12.9 L658.3 -15.0 L658.0 -16.6 L658.5 -19.3 L664.6 -21.6 L670.0 -22.8 L675.7 -22.9 L676.8 -21.6 L678.5 -21.0 L684.2 -20.7 L685.6 -21.4 L687.6 -20.2 L688.0 -19.0 L682.9 -12.1 L674.4 -7.6 L665.3 -5.3 L638.6 7.6 L614.4 18.0 L534.2 57.7 L513.0 66.7 L483.6 77.8 L434.6 95.2 L432.3 96.5 L431.2 96.2 L428.1 97.2 L401.0 108.0 L383.9 115.4 L358.4 128.1 L346.3 133.0 L320.6 140.9 L302.6 146.4 L293.8 148.6 L287.3 149.9 L286.6 150.0 L274.6 150.2 L273.7 149.5 L271.0 144.6 L261.8 146.5 L250.3 151.4 L241.2 154.3 L240.7 136.8 L241.0 133.1 L241.3 131.3 L240.9 128.3 L236.3 96.2 L232.5 69.9ZM141.6 60.4 L142.4 60.1 L143.6 61.2 L143.9 62.4 L143.6 65.9 L142.6 66.0 L141.6 64.7 L141.5 62.1 L141.6 60.4ZM138.0 82.4 L135.8 82.8 L130.8 80.9 L125.3 81.6 L116.1 83.8 L114.9 85.2 L113.7 87.7 L109.8 87.8 L108.3 87.5 L108.1 86.5 L105.5 85.6 L101.9 84.2 L103.5 55.1 L103.4 54.1 L102.2 52.9 L101.1 54.3 L95.9 51.9 L97.6 46.8 L99.8 40.1 L100.4 38.5 L127.1 49.0 L132.1 50.1 L138.6 52.3 L138.3 53.2 L138.1 56.8 L137.2 60.8 L137.4 62.4 L138.3 63.3 L139.0 65.0 L139.1 66.0 L139.0 66.8 L139.3 68.1 L138.6 68.9 L137.3 67.0 L136.5 65.3 L136.9 63.4 L136.2 61.8 L134.7 63.1 L134.1 64.7 L132.0 64.1 L130.3 65.2 L129.5 69.6 L129.6 71.1 L130.6 73.2 L132.7 75.8 L134.7 76.9 L138.0 82.4ZM114.3 122.2 L115.1 127.2 L118.1 134.0 L116.7 137.5 L119.8 162.3 L94.5 170.7 L92.8 169.8 L91.2 168.0 L88.5 168.3 L79.4 169.2 L76.4 169.1 L74.4 168.2 L73.5 167.6 L73.3 166.2 L74.9 164.2 L76.5 161.5 L76.0 159.6 L73.8 157.7 L67.6 156.4 L65.7 153.2 L64.9 148.7 L66.0 144.1 L66.7 142.7 L67.8 140.5 L71.7 135.8 L71.1 128.4 L70.4 127.4 L71.4 128.1 L74.6 125.4 L75.8 124.5 L78.5 118.8 L85.6 117.0 L87.6 111.8 L87.6 106.2 L89.9 105.6 L92.0 106.3 L94.8 109.1 L97.1 109.9 L98.7 112.8 L99.3 117.0 L102.0 119.1 L104.2 122.0 L106.5 127.0 L108.4 126.3 L112.9 122.6 L114.3 122.2ZM65.3 120.4 L66.1 120.8 L64.6 124.3 L63.7 124.5 L63.6 123.7 L65.3 120.4ZM87.6 106.2 L87.9 111.4 L85.6 117.0 L78.5 118.8 L75.8 124.5 L74.6 125.4 L71.4 128.1 L70.4 127.4 L69.9 125.3 L70.8 122.8 L71.7 122.1 L72.2 119.7 L71.4 117.8 L70.0 116.8 L73.0 99.1 L74.3 96.5 L76.7 91.6 L78.9 87.0 L80.7 83.4 L91.7 60.8 L94.6 54.7 L95.9 51.9 L101.1 54.3 L102.2 52.9 L103.4 54.1 L103.5 55.1 L101.9 84.2 L102.5 86.2 L100.8 87.8 L97.5 91.5 L95.5 90.6 L94.5 92.3 L94.6 93.1 L95.4 93.4 L95.0 94.1 L93.8 95.0 L92.9 96.2 L89.8 101.0 L88.8 103.2 L87.9 104.2 L87.6 106.2ZM35.8 182.4 L34.6 182.7 L31.1 185.6 L26.2 188.3 L25.0 187.9 L20.0 191.2 L17.0 192.1 L14.3 194.7 L10.5 195.2 L6.6 197.1 L5.6 196.9 L4.4 194.8 L4.0 192.7 L4.9 190.4 L7.7 187.8 L8.1 183.9 L6.3 179.3 L11.7 174.9 L15.1 175.0 L16.8 172.7 L18.8 162.0 L20.9 159.1 L21.3 157.3 L21.1 151.9 L19.7 151.7 L19.4 150.7 L19.8 146.2 L23.0 142.2 L25.6 140.9 L27.3 141.0 L28.4 142.1 L33.4 143.4 L42.7 142.1 L52.3 139.7 L55.3 139.9 L57.1 142.5 L57.7 149.0 L59.8 153.5 L61.8 156.6 L60.1 160.5 L57.5 164.0 L51.1 170.6 L45.2 178.0 L42.3 179.6 L37.8 184.3 L37.0 182.9 L35.8 182.4ZM143.3 50.3 L143.3 50.9 L143.6 52.3 L142.3 52.9 L141.0 51.8 L141.0 51.1 L141.7 50.9 L141.9 49.9 L143.0 49.8ZM215.3 -67.1 L186.9 -50.0 L181.8 -47.0 L179.7 -45.7 L154.5 -30.4 L164.1 -14.8 L166.1 -11.5 L168.2 -8.2 L170.9 -3.8 L175.2 2.7 L174.6 13.1 L175.0 15.2 L173.9 19.4 L173.3 20.2 L172.6 19.9 L168.7 21.5 L167.2 26.7 L166.3 28.1 L163.0 30.2 L156.3 33.1 L153.4 35.7 L146.3 40.4 L139.3 50.6 L138.6 52.3 L132.6 50.2 L127.3 48.5 L100.4 38.5 L107.2 8.6 L108.5 -6.6 L107.0 -18.8 L106.9 -23.5 L109.1 -42.5 L106.8 -50.4 L102.8 -54.3 L96.5 -69.6 L91.8 -76.4 L81.9 -113.5 L206.7 -130.3 L204.9 -103.6 L224.4 -72.5 L216.8 -68.0 L215.3 -67.1Z\" fill=\"#EFEDE8\" stroke=\"#FFFFFF\" stroke-width=\"1.2\" stroke-linejoin=\"round\"/></g><g font-family=\"Helvetica, Arial, sans-serif\" font-size=\"8\" letter-spacing=\"1.5\" fill=\"#A39F97\" text-anchor=\"middle\"><text x=\"84\" y=\"87\">Manhattan</text><text x=\"91\" y=\"143\">Brooklyn</text><text x=\"134\" y=\"117\">Queens</text><text x=\"114\" y=\"64\">Bronx</text><text x=\"114\" y=\"26\">Yonkers</text><text x=\"34\" y=\"166\">Staten Island</text><text x=\"191\" y=\"105\">Nassau</text><text x=\"405\" y=\"60\">Suffolk</text></g></svg>", "LON0": -74.27, "LAT1": 41.02, "k": 0.7575649843840496, "s": 376.2320708984724, "W": 704, "H": 207};
+</script>
+<script>
+(function(){
+const $=s=>document.querySelector(s);
+const esc=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let uid=0; const nid=()=>'d'+Date.now().toString(36)+(uid++);
+const DRAFT='mars-resume-draft-v1';
+const toast=m=>{const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(t._t);t._t=setTimeout(()=>t.hidden=true,4500);};
+
+/* ---------- formatting ---------- */
+const digits=v=>String(v==null?'':v).replace(/[^0-9.]/g,'');
+function money(v){const s=String(v==null?'':v).trim(); if(!s) return ''; const n=parseFloat(digits(s)); if(!/^\$?[\d,]+(\.\d+)?$/.test(s)||isNaN(n)) return s; return '$'+Math.round(n).toLocaleString('en-US');}
+function big(n){return n>=1e9?'$'+(n/1e9).toFixed(2)+'B':n>=1e6?'$'+(n/1e6).toFixed(1).replace(/\.0$/,'')+'M':'$'+Math.round(n/1e3)+'K';}
+function parseDate(v){if(!v) return null; let m=String(v).match(/^(\d{4})-(\d{2})-(\d{2})/); if(m) return new Date(+m[1],+m[2]-1,+m[3]);
+  m=String(v).match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})/); if(m){let y=+m[3]; if(y<100) y+=2000; return new Date(y,+m[1]-1,+m[2]);} const d=new Date(v); return isNaN(d)?null:d;}
+const isoDate=v=>{const d=parseDate(v); return d? d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'):'';};
+const fmtDate=v=>{const d=parseDate(v); return d? d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):(v||'');};
+const SIDE={listing:'Listing side',buyer:'Buyer side',both:'Both sides'};
+const DATE_LABEL={active:'Listed',pending:'Under contract',sold:'Closed'};
+
+/* ---------- data ---------- */
+function blankDeal(status){return {id:nid(),status:status||'sold',address:'',town:'',zip:'',price:'',date:'',side:'listing',agent:'',photo:'',lat:null,lng:null};}
+function blankData(){return {updated:'',team:{name:'The MARS Team',brokerage:'Epique Realty',phone:'',email:'',website:'',office:'1177 6th Ave, New York, NY 10036'},deals:[]};}
+let PUB=blankData(), D=null, mode='view', loadNote='';
+
+async function loadPublished(){
+  try{const r=await fetch('resume-data.json?t='+Date.now(),{cache:'no-store'}); if(!r.ok) throw new Error(r.status); PUB=await r.json(); PUB.deals=PUB.deals||[]; PUB.team=Object.assign(blankData().team,PUB.team||{});}
+  catch(e){loadNote='The team’s deal file (resume-data.json) could not be loaded. If you opened this page from your computer instead of the website, open the website link instead.';}
+  try{const raw=localStorage.getItem(DRAFT); if(raw){const d=JSON.parse(raw); if(d&&d.deals&&d.updated===PUB.updated&&!d._dirty){localStorage.removeItem(DRAFT);} else if(d&&d.deals){D=d;}}}catch(e){}
+  render();
+}
+const cur=()=>mode==='edit'?D:PUB;
+let saveT;
+function persist(){if(!D) return; D._dirty=true; clearTimeout(saveT); saveT=setTimeout(()=>{try{localStorage.setItem(DRAFT,JSON.stringify(D));}catch(e){try{const l=JSON.parse(JSON.stringify(D));l.deals.forEach(x=>x.photo='');localStorage.setItem(DRAFT,JSON.stringify(l));toast('Draft kept without photos. Download the data file soon so photos aren’t lost.');}catch(e2){}}},400);}
+
+/* ---------- selection ---------- */
+function sortDesc(list){return list.slice().sort((a,b)=>(parseDate(b.date)||0)-(parseDate(a.date)||0));}
+function pick(data){
+  const ok=d=>d.address;
+  const by=st=>sortDesc(data.deals.filter(d=>d.status===st&&ok(d)));
+  const active=by('active'),pending=by('pending'),sold=by('sold');
+  return {active,pending,sold,featPending:pending.slice(0,3),featSold:sold.slice(0,3),restPending:pending.slice(3),restSold:sold.slice(3)};
+}
+
+/* ---------- report ---------- */
+const root=$('#pages');
+let LOGO='';
+(function(){const img=new Image();img.onload=()=>{try{const c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;c.getContext('2d').drawImage(img,0,0);LOGO=c.toDataURL('image/png');}catch(e){LOGO='logo.png';}render();};img.src='logo.png?v=1';})();
+const MAP_IMG='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(MAP.svg);
+
+function makePage(data,cont){
+  const t=data.team;
+  const w=document.createElement('div');w.className='pagewrap';
+  const upd=data.updated?fmtDate(data.updated):fmtDate(new Date().toISOString());
+  w.innerHTML=`<div class="page"><div class="rhead">${LOGO?`<img src="${LOGO}" alt="">`:''}<div class="t"><div class="eyebrow">${esc(t.name)}${t.brokerage?' · '+esc(t.brokerage):''}</div><h1>Team Resume${cont?'<em>continued</em>':''}</h1></div>
+    <div class="ct">${t.phone?esc(t.phone)+'<br>':''}${t.email?esc(t.email)+'<br>':''}${t.website?esc(t.website)+'<br>':''}Updated ${esc(upd)}</div></div><div class="pbody"></div>
+    <div class="pfoot"><span><b>${esc(t.name)}</b>${t.office?' · '+esc(t.office):''}</span><span class="pnum"></span></div></div>`;
+  root.appendChild(w); return w.querySelector('.pbody');
+}
+function el(html){const t=document.createElement('template');t.innerHTML=html.trim();return t.content.firstElementChild;}
+/* blocks: [{html, head?}] where head is re-added at the top of a new page (table header) */
+function flowAll(data,blocks){
+  let body=makePage(data,false), lastHead=null;
+  for(const b of blocks){
+    const node=el(b.html); body.appendChild(node);
+    if(body.scrollHeight>body.clientHeight+1&&body.children.length>1){
+      node.remove(); body=makePage(data,true);
+      if(b.head) body.appendChild(el(b.head));
+      body.appendChild(node);
+    }
+  }
+}
+function card(d){
+  const label={sold:'Sold',pending:'Under contract',active:'Active'}[d.status];
+  const meta=[[d.town,d.zip].filter(Boolean).join(', NY ').replace(/^, NY /,'NY '),SIDE[d.side]].filter(Boolean).join(' · ');
+  return `<div class="dcard"><div class="dphoto" style="${d.photo?`background-image:url('${d.photo}')`:''}">${d.photo?'':'Photo'}</div>
+    <div class="dtop"><span class="pill ${d.status}">${label}</span><span class="dprice">${esc(money(d.price))||'<span class="empty">$—</span>'}</span></div>
+    <div><div class="daddr">${esc(d.address)}</div><div class="dmeta">${esc(meta)}${d.agent?'<br>'+esc(d.agent):''}</div></div></div>`;
+}
+function cardSection(title,sub,list){
+  const out=[];
+  for(let i=0;i<list.length;i+=3){
+    out.push({html:`<div>${i?'':`<div class="h2"><span>${esc(title)}</span><small>${esc(sub)}</small></div>`}<div class="cards">${list.slice(i,i+3).map(card).join('')}</div></div>`});
+  }
+  return out;
+}
+const TH=`<div class="trow th"><span>Property</span><span>Status</span><span class="r">Price</span><span>Date</span><span>Side</span><span>Agent</span></div>`;
+function row(d){
+  const label={sold:'Sold',pending:'Under contract',active:'Active'}[d.status];
+  return `<div class="trow"><div class="a"><b>${esc(d.address)}</b><small>${esc([d.town,d.zip].filter(Boolean).join(', NY '))}</small></div><span>${label}</span><span class="r"><b>${esc(money(d.price))}</b></span><span>${esc(fmtDate(d.date))}</span><span>${esc((SIDE[d.side]||'').replace(' side','').replace(' sides',' sides'))}</span><span>${esc(d.agent)}</span></div>`;
+}
+function inMap(d){return d.lat!=null&&d.lng!=null&&!isNaN(d.lat);}
+function proj(d){const x=(d.lng-MAP.LON0)*MAP.k*MAP.s, y=(MAP.LAT1-d.lat)*MAP.s; return {x,y,ok:x>=0&&x<=MAP.W&&y>=0&&y<=MAP.H};}
+function mapBlock(data){
+  const deals=data.deals.filter(d=>d.address);
+  const placed=deals.filter(inMap).map(d=>Object.assign({d},proj(d))).filter(p=>p.ok);
+  const order={sold:0,pending:1,active:2}; placed.sort((a,b)=>order[a.d.status]-order[b.d.status]);
+  const dots=placed.map(p=>`<div class="mdot ${p.d.status}" style="left:${p.x.toFixed(1)}px;top:${p.y.toFixed(1)}px"></div>`).join('');
+  const hasSold=placed.some(p=>p.d.status==='sold'),hasOther=placed.some(p=>p.d.status!=='sold');
+  return `<div><div class="h2"><span>Where we’ve done business</span><small>Long Island · New York City · Yonkers</small></div>
+    <div class="mapwrap"><img src="${MAP_IMG}" alt="">${dots}</div>
+    <div class="legend">${hasSold?'<span><i style="background:var(--ink)"></i>Sold</span>':''}${hasOther?'<span><i style="background:var(--gold)"></i>Active or under contract</span>':''}</div>
+    <p class="mnote">${placed.length} ${placed.length===1?'home':'homes'} shown</p></div>`;
+}
+function render(){
+  const data=cur(); root.innerHTML='';
+  const P=pick(data);
+  const vol=P.sold.reduce((s,d)=>s+(parseFloat(digits(d.price))||0),0);
+  const blocks=[{html:`<div class="stats"><div><b>${P.sold.length}</b><span>Homes sold</span></div><div><b>${vol?big(vol):'$0'}</b><span>Sales volume</span></div><div><b>${P.pending.length}</b><span>Under contract</span></div><div><b>${P.active.length}</b><span>Active listings</span></div></div>`}];
+  if(P.active.length) blocks.push(...cardSection('Active listings',`${P.active.length} on the market`,P.active));
+  if(P.featPending.length) blocks.push(...cardSection('Under contract','Most recent',P.featPending));
+  if(P.featSold.length) blocks.push(...cardSection('Recently sold','Most recent',P.featSold));
+  const rest=P.restPending.concat(P.restSold);
+  if(rest.length){
+    rest.forEach((d,i)=>blocks.push({html:i?row(d):`<div><div class="h2"><span>Transaction history</span><small>Newest first</small></div>${TH}${row(d)}</div>`,head:TH}));
+  }
+  if(!data.deals.some(d=>d.address)) blocks.push({html:`<div class="emptystate">No deals have been published yet.</div>`});
+  blocks.push({html:mapBlock(data)});
+  flowAll(data,blocks);
+  const pages=root.querySelectorAll('.page');
+  pages.forEach((pg,i)=>pg.querySelector('.pnum').textContent=`Page ${i+1} of ${pages.length}`);
+  const ex=data.deals.some(d=>d.example);
+  $('#status').innerHTML=(loadNote?`<b style="color:var(--warn)">${esc(loadNote)}</b> `:'')+(mode==='edit'?`<b>Your edits</b> · not visible to the team until the data file is uploaded · `:`<b>Published version</b> · `)+`${pages.length} pages`+(ex?' · contains example deals':'');
+  fit();
+}
+function fit(){const w=$('#preview').clientWidth-(innerWidth<=860?32:48); root.style.setProperty('--s',Math.min(1,Math.max(.3,w/816)).toFixed(4));}
+new ResizeObserver(fit).observe($('#preview'));
+
+/* ---------- editor ---------- */
+const openDeals=new Set(); let importMsg='', pendingDel=null, locating=false;
+function inp(path,label,opts={}){const v=getP(path)??'';const id='f_'+path.replace(/\./g,'_');
+  return `<div class="field"><label for="${id}">${label}</label><input id="${id}" data-k="${path}" type="${opts.type||'text'}" value="${esc(v)}" placeholder="${esc(opts.ph||'')}" ${opts.list?`list="${opts.list}"`:''} ${opts.mode?`inputmode="${opts.mode}"`:''}></div>`;}
+function getP(path){return path.split('.').reduce((o,k)=>o==null?o:o[k],D);}
+function setP(path,val){const ks=path.split('.');let o=D;for(let i=0;i<ks.length-1;i++)o=o[ks[i]];o[ks[ks.length-1]]=val;}
+function locText(d){if(d._locating) return '<span class="loc">Finding…</span>'; if(inMap(d)){const p=proj(d);return p.ok?`<span class="loc ok">On the map${d.approx?' (town only)':''}</span>`:'<span class="loc bad">Located, but outside the map area</span>';} return d._locFail?'<span class="loc bad">Not found. Check the address and town.</span>':'<span class="loc">Not on the map yet</span>';}
+function dealForm(d,i){
+  const price=d.status==='sold'?'Sold price':'List price';
+  return `<details class="comp" data-id="${d.id}" ${openDeals.has(d.id)?'open':''}><summary><span class="dot ${d.status}"></span><span class="addr">${esc(d.address||'New deal')}</span><span class="pr">${esc(money(d.price))}</span></summary>
+  <div class="compbody">
+    <div class="field"><label for="st_${d.id}">Status</label><select id="st_${d.id}" data-status="${i}"><option value="active" ${d.status==='active'?'selected':''}>Active</option><option value="pending" ${d.status==='pending'?'selected':''}>Under contract</option><option value="sold" ${d.status==='sold'?'selected':''}>Sold</option></select></div>
+    ${inp(`deals.${i}.address`,'Street address')}
+    <div class="grid2">${inp(`deals.${i}.town`,'Town')}${inp(`deals.${i}.zip`,'Zip',{mode:'numeric'})}</div>
+    <div class="grid2">${inp(`deals.${i}.price`,price,{mode:'numeric'})}${inp(`deals.${i}.date`,DATE_LABEL[d.status]+' date',{type:'date'})}</div>
+    <div class="grid2"><div class="field"><label for="sd_${d.id}">Side</label><select id="sd_${d.id}" data-side="${i}">${Object.entries(SIDE).map(([k,v])=>`<option value="${k}" ${d.side===k?'selected':''}>${v}</option>`).join('')}</select></div>${inp(`deals.${i}.agent`,'Agent',{list:'agents'})}</div>
+    <div class="field"><span class="lbl">Photo ${d.status==='sold'?'(shows for the 3 most recent sales)':d.status==='pending'?'(shows for the 3 most recent)':'(always shows)'}</span><div class="photo"><div class="thumb" style="${d.photo?`background-image:url('${d.photo}')`:''}"></div>
+      <label class="btn btn-line btn-small" for="ph_${d.id}">${d.photo?'Replace':'Upload'}</label><input type="file" accept="image/*" id="ph_${d.id}" data-photo="${i}" hidden>${d.photo?`<button type="button" class="btn btn-line btn-small btn-danger" data-clearphoto="${i}">Remove</button>`:''}</div></div>
+    <div class="dealtools">${locText(d)}<button type="button" class="btn btn-line btn-small" data-locate="${i}">${inMap(d)?'Find again':'Find on map'}</button></div>
+    <div class="comptools"><button type="button" class="btn btn-line btn-small btn-danger" data-del="${i}">${pendingDel===d.id?'Click again to delete':'Delete deal'}</button></div>
+  </div></details>`;
+}
+function renderForm(){
+  if(mode!=='edit'){ $('#form').innerHTML=''; return; }
+  document.querySelectorAll('details.comp').forEach(x=>{x.open?openDeals.add(x.dataset.id):openDeals.delete(x.dataset.id);});
+  const sc=$('#form').scrollTop;
+  const agents=[...new Set(D.deals.map(d=>d.agent).filter(Boolean))];
+  const missing=D.deals.filter(d=>d.address&&!inMap(d)).length;
+  const groups=['active','pending','sold'].map(st=>{const items=D.deals.map((d,i)=>[d,i]).filter(([d])=>d.status===st);items.sort((a,b)=>(parseDate(b[0].date)||0)-(parseDate(a[0].date)||0));
+    const name={active:'Active',pending:'Under contract',sold:'Sold'}[st];
+    return `<div class="compgroup"><h3>${name} · ${items.length}<button type="button" class="btn btn-line btn-small" data-add="${st}">Add ${st==='pending'?'under contract':name.toLowerCase()}</button></h3>${items.map(([d,i])=>dealForm(d,i)).join('')}</div>`;}).join('');
+  $('#form').innerHTML=`
+   <div class="notice" style="flex-direction:column"><p><b>Your edits are only on this computer</b> until you publish them. The team sees the published version.</p>
+    <ol class="steps"><li>Add or update deals below.</li><li>Click <b>Download data file</b>.</li><li>On GitHub, upload <b>resume-data.json</b> to replace the old one.</li></ol>
+    <div class="comptools" style="margin-top:6px"><button type="button" class="btn btn-gold btn-small" id="dlData">Download data file</button><button type="button" class="btn btn-line btn-small" id="doneEdit">Back to published version</button><button type="button" class="btn btn-line btn-small btn-danger" id="discard">${pendingDel==='__discard'?'Click again to discard':'Discard my edits'}</button></div></div>
+   ${D.deals.some(d=>d.example)?`<div class="notice"><p>This file has <b>example deals</b>.</p><button type="button" class="btn btn-line btn-small btn-danger" id="clearEx">Remove examples</button></div>`:''}
+   <details class="sec" id="sec_team"><summary><h2>Team details</h2><small>Header and footer</small></summary><div class="secbody">
+     ${inp('team.name','Team name')}${inp('team.brokerage','Brokerage')}<div class="grid2">${inp('team.phone','Phone',{type:'tel'})}${inp('team.email','Email',{type:'email'})}</div>${inp('team.website','Website')}${inp('team.office','Office address')}</div></details>
+   <details class="sec" open id="sec_deals"><summary><h2>Deals</h2><small>${D.deals.length} total</small></summary><div class="secbody">
+     <div class="importbox"><span class="lbl">Add many at once</span><p class="hint">Import a CSV of past deals with columns like Address, Town, Zip, Status, Price, Date, Side and Agent.</p>
+       <div class="comptools"><label class="btn btn-line btn-small" for="csvFile">Choose CSV file</label><input type="file" id="csvFile" accept=".csv,text/csv" hidden>
+       <button type="button" class="btn btn-line btn-small" id="locAll" ${missing&&!locating?'':'disabled'}>${locating?'Finding homes…':`Put ${missing} missing ${missing===1?'home':'homes'} on the map`}</button></div>${importMsg}</div>
+     ${groups}</div></details>
+   <datalist id="agents">${agents.map(a=>`<option value="${esc(a)}">`).join('')}</datalist>`;
+  $('#form').scrollTop=sc;
+}
+const form=$('#form');
+let rT;
+function changed(structural){persist(); clearTimeout(rT); rT=setTimeout(render,structural?0:150); if(structural) renderForm();}
+form.addEventListener('input',e=>{const k=e.target.dataset.k; if(!k) return; setP(k,e.target.value);
+  const m=k.match(/^deals\.(\d+)\.(address|town|zip)$/); if(m){const d=D.deals[+m[1]]; d.lat=null;d.lng=null;d._locFail=false;}
+  if(k.startsWith('deals.')){const box=e.target.closest('details.comp'); if(box){const d=D.deals.find(x=>x.id===box.dataset.id); box.querySelector('.addr').textContent=d.address||'New deal'; box.querySelector('.pr').textContent=money(d.price);}}
+  changed(false);});
+form.addEventListener('focusout',e=>{const k=e.target.dataset&&e.target.dataset.k; if(!k) return; const m=k.match(/^deals\.(\d+)\.(address|town|zip)$/); if(m){const d=D.deals[+m[1]]; if(d.address&&d.town&&!inMap(d)) locate(d);}});
+form.addEventListener('change',async e=>{const t=e.target;
+  if(t.dataset.status!=null){const d=D.deals[+t.dataset.status]; d.status=t.value; openDeals.add(d.id); changed(true); return;}
+  if(t.dataset.side!=null){D.deals[+t.dataset.side].side=t.value; changed(false); return;}
+  if(t.dataset.photo!=null){const f=t.files[0]; if(!f) return; try{D.deals[+t.dataset.photo].photo=await shrink(f,900); changed(true);}catch(err){toast('That image could not be read. Try a JPG or PNG.');} return;}
+  if(t.id==='csvFile'){const f=t.files[0]; if(f) importCsv(f); t.value='';}
+});
+form.addEventListener('click',e=>{const b=e.target.closest('button'); if(!b) return; const d=b.dataset;
+  if(d.add){const x=blankDeal(d.add); D.deals.push(x); openDeals.add(x.id); changed(true); setTimeout(()=>{const i=document.querySelector(`details.comp[data-id="${x.id}"] input`); i&&i.focus();},30);}
+  else if(d.del!=null){const x=D.deals[+d.del]; if(pendingDel===x.id){D.deals.splice(+d.del,1);pendingDel=null;changed(true);} else {pendingDel=x.id;renderForm();setTimeout(()=>{if(pendingDel===x.id){pendingDel=null;renderForm();}},3500);}}
+  else if(d.clearphoto!=null){D.deals[+d.clearphoto].photo='';changed(true);}
+  else if(d.locate!=null){locate(D.deals[+d.locate]);}
+  else if(b.id==='locAll'){locateAll();}
+  else if(b.id==='dlData'){downloadData();}
+  else if(b.id==='doneEdit'){setMode('view');}
+  else if(b.id==='clearEx'){D.deals=D.deals.filter(x=>!x.example);changed(true);}
+  else if(b.id==='discard'){if(pendingDel==='__discard'){pendingDel=null;D=null;try{localStorage.removeItem(DRAFT);}catch(err){}setMode('view');toast('Your edits were discarded.');} else {pendingDel='__discard';renderForm();setTimeout(()=>{if(pendingDel==='__discard'){pendingDel=null;renderForm();}},3500);}}
+});
+function shrink(file,max){return new Promise((res,rej)=>{const r=new FileReader();r.onerror=rej;r.onload=()=>{const img=new Image();img.onerror=rej;img.onload=()=>{const s=Math.min(1,max/Math.max(img.width,img.height));const cv=document.createElement('canvas');cv.width=Math.round(img.width*s);cv.height=Math.round(img.height*s);cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);res(cv.toDataURL('image/jpeg',.8));};img.src=r.result;};r.readAsDataURL(file);});}
+
+/* map lookup: OpenStreetMap's free address search, one request per second */
+let lastQ=0;
+async function geocode(q){const wait=Math.max(0,1100-(Date.now()-lastQ)); if(wait) await new Promise(r=>setTimeout(r,wait)); lastQ=Date.now();
+  const r=await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=us&q='+encodeURIComponent(q),{headers:{Accept:'application/json'}});
+  if(!r.ok) throw new Error('lookup '+r.status); const j=await r.json(); return j[0]?{lat:+j[0].lat,lng:+j[0].lon}:null;}
+async function locate(d,quiet){
+  if(!d.address){toast('Add the street address first.');return false;}
+  d._locating=true; d._locFail=false; if(!quiet) renderForm();
+  try{
+    let g=await geocode(`${d.address}, ${d.town}, NY ${d.zip}`.replace(/,\s*,/g,',')); let approx=false;
+    if(!g&&(d.town||d.zip)){g=await geocode(`${d.town||''}, NY ${d.zip||''}`);approx=!!g;}
+    if(g){d.lat=+g.lat.toFixed(5);d.lng=+g.lng.toFixed(5);d.approx=approx;} else d._locFail=true;
+  }catch(e){d._locFail=true; if(!quiet) toast('The map lookup isn’t responding. Try again in a minute.');}
+  d._locating=false; persist(); if(!quiet){renderForm();render();} return !d._locFail;
+}
+async function locateAll(){locating=true;renderForm();let n=0,f=0;
+  for(const d of D.deals.filter(x=>x.address&&!inMap(x))){const ok=await locate(d,true); ok?n++:f++; const b=$('#locAll'); if(b) b.textContent=`Finding homes… ${n+f} done`;}
+  locating=false;renderForm();render();toast(`Put ${n} ${n===1?'home':'homes'} on the map.`+(f?` ${f} could not be found; check those addresses.`:''));}
+
+/* CSV import */
+const norm=s=>String(s).toLowerCase().replace(/[^a-z0-9]/g,'');
+const MAP_COLS={address:['address','streetaddress','fulladdress','unparsedaddress','propertyaddress','property'],town:['town','city','postalcity','municipality'],zip:['zip','zipcode','postalcode'],
+  status:['status','listingstatus','standardstatus','mlsstatus'],price:['price','soldprice','closeprice','saleprice','listprice','currentprice'],date:['date','closedate','solddate','closingdate','contractdate','listdate','listingdate'],
+  side:['side','represented','representation','role'],agent:['agent','agentname','listagent','listagentfullname','teammember']};
+function importCsv(file){Papa.parse(file,{header:true,skipEmptyLines:true,complete:res=>{
+  const heads=res.meta.fields||[];const col={};for(const [k,ns] of Object.entries(MAP_COLS)){for(const n of ns){const h=heads.find(h=>norm(h)===n);if(h){col[k]=h;break;}}}
+  if(!col.address){importMsg='<p class="result bad">No address column was found. Make sure the first row has a column named Address.</p>';renderForm();return;}
+  let added=0,skipped=0;
+  for(const r of res.data){const g=k=>col[k]?String(r[col[k]]||'').trim():''; const address=g('address'); if(!address){skipped++;continue;}
+    const s=g('status').toLowerCase(); const status=/pend|contract|accepted|contingent/.test(s)?'pending':/activ|coming|new/.test(s)?'active':'sold';
+    const sd=g('side').toLowerCase(); const side=/both|dual/.test(sd)?'both':/buy/.test(sd)?'buyer':'listing';
+    D.deals.push(Object.assign(blankDeal(status),{address,town:g('town'),zip:g('zip'),price:digits(g('price'))||g('price'),date:isoDate(g('date'))||g('date'),side,agent:g('agent')}));added++;}
+  importMsg=`<p class="result ok">Imported ${added} deals.${skipped?` Skipped ${skipped} rows without an address.`:''} Click “Put homes on the map” to place them.</p>`;changed(true);
+}});}
+
+/* publishing: download the data file the website reads */
+function downloadData(){
+  const out=JSON.parse(JSON.stringify(D)); delete out._dirty;
+  out.updated=new Date().toISOString();
+  const keep=new Set(sortDesc(out.deals.filter(d=>d.status==='sold')).slice(0,6).map(d=>d.id));
+  out.deals.forEach(d=>{delete d._locating;delete d._locFail; if(d.status==='sold'&&!keep.has(d.id)) d.photo='';});
+  save('resume-data.json',new Blob([JSON.stringify(out)],{type:'application/json'}));
+  D.updated=out.updated; persist();
+  toast('Downloaded resume-data.json. Upload it to GitHub to publish.');
+}
+function save(name,blob){const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);}
+
+function setMode(m){
+  mode=m;
+  if(m==='edit'&&!D){D=JSON.parse(JSON.stringify(PUB));}
+  $('#app').classList.toggle('view',m!=='edit');
+  $('#editBtn').textContent=m==='edit'?'Done editing':'Add or edit deals';
+  renderForm(); render();
+}
+$('#editBtn').addEventListener('click',()=>setMode(mode==='edit'?'view':'edit'));
+
+/* PDF */
+$('#savePdf').addEventListener('click',async()=>{
+  const btn=$('#savePdf');if(!window.html2canvas||!window.jspdf){toast('The PDF tools did not load. Reload the page and try again.');return;}
+  btn.disabled=true;const label=btn.textContent;
+  try{clearTimeout(rT);render();await document.fonts.ready;
+    const pages=[...root.querySelectorAll('.page')];const pdf=new window.jspdf.jsPDF({unit:'pt',format:'letter',orientation:'portrait',compress:true});
+    for(let i=0;i<pages.length;i++){btn.textContent=`Page ${i+1} of ${pages.length}…`;
+      const c=await html2canvas(pages[i],{scale:2.2,useCORS:true,backgroundColor:'#ffffff',logging:false,onclone:doc=>{doc.querySelectorAll('.page').forEach(p=>p.style.transform='none');doc.querySelectorAll('.pagewrap').forEach(w=>{w.style.width='816px';w.style.height='1056px';});}});
+      if(i) pdf.addPage('letter','portrait'); pdf.addImage(c.toDataURL('image/jpeg',.92),'JPEG',0,0,612,792);}
+    const t=cur().team.name||'Team';save(`${t} Resume.pdf`,pdf.output('blob'));toast('Downloaded the resume PDF.');
+  }catch(e){toast('The PDF could not be built. Try again, or remove very large photos.');}
+  btn.disabled=false;btn.textContent=label;
+});
+
+const OWNER=location.hash.replace('#','')==='edit'; $('#editBtn').hidden=!OWNER;
+loadPublished();
+document.fonts.ready.then(render);
+})();
+</script>
+</body>
+</html>
