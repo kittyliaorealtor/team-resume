@@ -33,7 +33,7 @@ Anyone who learns the editing link can make edits on their own computer, but nob
 
 1. Open your editing link and click **Add or edit deals**.
 2. Add a new deal, or change a status (Active → Under contract → Sold) and the price and date.
-3. Upload photos for active listings and recent deals. Active listings always show a photo. Under contract and Sold show photos for the 3 most recent.
+3. Upload photos for active listings and recent deals. Active listings always show a photo. Under contract always shows photos. Sold shows photos for the 3 most recent.
 4. Each home is placed on the map automatically after you type the address and town. Look for "On the map" under each deal.
 5. Click **Download data file**. This saves `resume-data.json` to your computer.
 6. On GitHub, open the repository, click **Add file → Upload files**, drag in the new `resume-data.json`, and click **Commit changes**. It replaces the old one.
@@ -50,3 +50,9 @@ Anyone who learns the editing link can make edits on their own computer, but nob
 - Your edits are saved on your own computer until you upload the data file. If you switch computers before uploading, those edits won't be there.
 - To keep the file small, photos are kept only for the 6 most recent sales, since older sales appear in the table without photos.
 - Map locations come from OpenStreetMap's free address search. If an address can't be found, the home is placed at its town instead ("town only"), or you'll see "Not found" so you can fix the address.
+
+## Agent contact cards
+
+Anyone viewing the resume can pick themselves (and teammates) from **Agents on this copy** above the pages. Their contact card and headshot print at the end of the resume. Each person's choice is remembered on their own computer.
+
+The agent list (`agents.js`) and headshots (`agents/` folder) are separate copies from the CMA Builder's. When someone joins or a photo changes, update both repositories.
