@@ -514,17 +514,37 @@ function setMode(m){
 $('#editBtn').addEventListener('click',()=>setMode(mode==='edit'?'view':'edit'));
 
 /* PDF */
+
+/* The PDF tool blurs CSS background photos, so before saving, each photo is
+   cropped at print resolution and swapped in as a plain image. */
+function loadImg(src){return new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=src;});}
+async function sharpenPhotos(scope){
+  const els=[...scope.querySelectorAll('.page [style*="background-image"]')];
+  for(const el of els){
+    const m=el.style.backgroundImage.match(/url\(["']?(.+?)["']?\)/); if(!m) continue;
+    const w=el.offsetWidth,h=el.offsetHeight; if(!w||!h) continue;
+    let img; try{img=await loadImg(m[1]);}catch(e){continue;}
+    const K=3,cw=Math.round(w*K),ch=Math.round(h*K),s=Math.max(cw/img.naturalWidth,ch/img.naturalHeight);
+    const sw=cw/s,sh=ch/s,cv=document.createElement('canvas');cv.width=cw;cv.height=ch;
+    const cx=cv.getContext('2d');cx.imageSmoothingQuality='high';cx.drawImage(img,(img.naturalWidth-sw)/2,(img.naturalHeight-sh)/2,sw,sh,0,0,cw,ch);
+    const im=document.createElement('img');im.alt='';im.style.cssText='position:absolute;left:0;top:0;width:100%;height:100%;max-width:none;display:block';
+    try{im.src=cv.toDataURL('image/jpeg',.93);}catch(e){continue;}
+    try{await im.decode();}catch(e){}
+    if(getComputedStyle(el).position==='static') el.style.position='relative';
+    el.style.backgroundImage='none'; el.insertBefore(im,el.firstChild);
+  }
+}
 $('#savePdf').addEventListener('click',async()=>{
   const btn=$('#savePdf');if(!window.html2canvas||!window.jspdf){toast('The PDF tools did not load. Reload the page and try again.');return;}
   btn.disabled=true;const label=btn.textContent;
-  try{clearTimeout(rT);render();await document.fonts.ready;
+  try{clearTimeout(rT);render();await document.fonts.ready;btn.textContent='Preparing photos…';await sharpenPhotos(root);
     const pages=[...root.querySelectorAll('.page')];const pdf=new window.jspdf.jsPDF({unit:'pt',format:'letter',orientation:'portrait',compress:true});
     for(let i=0;i<pages.length;i++){btn.textContent=`Page ${i+1} of ${pages.length}…`;
       const c=await html2canvas(pages[i],{scale:3,useCORS:true,backgroundColor:'#ffffff',logging:false,onclone:doc=>{doc.querySelectorAll('.page').forEach(p=>p.style.transform='none');doc.querySelectorAll('.pagewrap').forEach(w=>{w.style.width='816px';w.style.height='1056px';});}});
       if(i) pdf.addPage('letter','portrait'); pdf.addImage(c.toDataURL('image/jpeg',.95),'JPEG',0,0,612,792);}
     const t=cur().team.name||'Team';save(`${t} Resume.pdf`,pdf.output('blob'));toast('Downloaded the resume PDF.');
   }catch(e){toast('The PDF could not be built. Try again, or remove very large photos.');}
-  btn.disabled=false;btn.textContent=label;
+  btn.disabled=false;btn.textContent=label;render();
 });
 
 const showEdit=()=>{$('#editBtn').hidden=location.hash.replace('#','')!=='edit';}; showEdit(); addEventListener('hashchange',showEdit);
