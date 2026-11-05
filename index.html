@@ -276,7 +276,7 @@ let LOGO='';
 /* team roster comes from agents.js; headshots live in the agents/ folder */
 const ROSTER=(Array.isArray(window.MARS_AGENTS)?window.MARS_AGENTS:[]).filter(a=>a&&a.id&&a.name);
 const HEADS={};
-ROSTER.forEach(a=>{if(!a.photo) return; const img=new Image(); img.onload=()=>{try{const m=400,sc=Math.min(1,m/Math.max(img.naturalWidth,img.naturalHeight));const cv=document.createElement('canvas');cv.width=Math.round(img.naturalWidth*sc);cv.height=Math.round(img.naturalHeight*sc);cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);HEADS[a.id]=cv.toDataURL('image/jpeg',.9);}catch(e){HEADS[a.id]='agents/'+a.photo;} render();}; img.src='agents/'+encodeURIComponent(a.photo)+'?t='+Date.now();});
+ROSTER.forEach(a=>{if(!a.photo) return; const img=new Image(); img.onload=()=>{try{const m=800,sc=Math.min(1,m/Math.max(img.naturalWidth,img.naturalHeight));const cv=document.createElement('canvas');cv.width=Math.round(img.naturalWidth*sc);cv.height=Math.round(img.naturalHeight*sc);cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);HEADS[a.id]=cv.toDataURL('image/jpeg',.9);}catch(e){HEADS[a.id]='agents/'+a.photo;} render();}; img.src='agents/'+encodeURIComponent(a.photo)+'?t='+Date.now();});
 const PICK='mars-resume-agents-v1';
 let agentIds=[]; try{agentIds=JSON.parse(localStorage.getItem(PICK)||'[]').filter(id=>ROSTER.some(r=>r.id===id));}catch(e){agentIds=[];}
 const saveAgents=()=>{try{localStorage.setItem(PICK,JSON.stringify(agentIds));}catch(e){}};
@@ -441,7 +441,7 @@ form.addEventListener('focusout',e=>{const k=e.target.dataset&&e.target.dataset.
 form.addEventListener('change',async e=>{const t=e.target;
   if(t.dataset.status!=null){const d=D.deals[+t.dataset.status]; d.status=t.value; openDeals.add(d.id); changed(true); return;}
   if(t.dataset.side!=null){D.deals[+t.dataset.side].side=t.value; changed(false); return;}
-  if(t.dataset.photo!=null){const f=t.files[0]; if(!f) return; try{D.deals[+t.dataset.photo].photo=await shrink(f,900); changed(true);}catch(err){toast('That image could not be read. Try a JPG or PNG.');} return;}
+  if(t.dataset.photo!=null){const f=t.files[0]; if(!f) return; try{D.deals[+t.dataset.photo].photo=await shrink(f,1400); changed(true);}catch(err){toast('That image could not be read. Try a JPG or PNG.');} return;}
   if(t.id==='csvFile'){const f=t.files[0]; if(f) importCsv(f); t.value='';}
 });
 form.addEventListener('click',e=>{const b=e.target.closest('button'); if(!b) return; const d=b.dataset;
@@ -455,7 +455,7 @@ form.addEventListener('click',e=>{const b=e.target.closest('button'); if(!b) ret
   else if(b.id==='clearEx'){D.deals=D.deals.filter(x=>!x.example);changed(true);}
   else if(b.id==='discard'){if(pendingDel==='__discard'){pendingDel=null;D=null;try{localStorage.removeItem(DRAFT);}catch(err){}setMode('view');toast('Your edits were discarded.');} else {pendingDel='__discard';renderForm();setTimeout(()=>{if(pendingDel==='__discard'){pendingDel=null;renderForm();}},3500);}}
 });
-function shrink(file,max){return new Promise((res,rej)=>{const r=new FileReader();r.onerror=rej;r.onload=()=>{const img=new Image();img.onerror=rej;img.onload=()=>{const s=Math.min(1,max/Math.max(img.width,img.height));const cv=document.createElement('canvas');cv.width=Math.round(img.width*s);cv.height=Math.round(img.height*s);cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);res(cv.toDataURL('image/jpeg',.8));};img.src=r.result;};r.readAsDataURL(file);});}
+function shrink(file,max){return new Promise((res,rej)=>{const r=new FileReader();r.onerror=rej;r.onload=()=>{const img=new Image();img.onerror=rej;img.onload=()=>{const s=Math.min(1,max/Math.max(img.width,img.height));const cv=document.createElement('canvas');cv.width=Math.round(img.width*s);cv.height=Math.round(img.height*s);cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);res(cv.toDataURL('image/jpeg',.88));};img.src=r.result;};r.readAsDataURL(file);});}
 
 /* map lookup: OpenStreetMap's free address search, one request per second */
 let lastQ=0;
@@ -520,8 +520,8 @@ $('#savePdf').addEventListener('click',async()=>{
   try{clearTimeout(rT);render();await document.fonts.ready;
     const pages=[...root.querySelectorAll('.page')];const pdf=new window.jspdf.jsPDF({unit:'pt',format:'letter',orientation:'portrait',compress:true});
     for(let i=0;i<pages.length;i++){btn.textContent=`Page ${i+1} of ${pages.length}…`;
-      const c=await html2canvas(pages[i],{scale:2.2,useCORS:true,backgroundColor:'#ffffff',logging:false,onclone:doc=>{doc.querySelectorAll('.page').forEach(p=>p.style.transform='none');doc.querySelectorAll('.pagewrap').forEach(w=>{w.style.width='816px';w.style.height='1056px';});}});
-      if(i) pdf.addPage('letter','portrait'); pdf.addImage(c.toDataURL('image/jpeg',.92),'JPEG',0,0,612,792);}
+      const c=await html2canvas(pages[i],{scale:3,useCORS:true,backgroundColor:'#ffffff',logging:false,onclone:doc=>{doc.querySelectorAll('.page').forEach(p=>p.style.transform='none');doc.querySelectorAll('.pagewrap').forEach(w=>{w.style.width='816px';w.style.height='1056px';});}});
+      if(i) pdf.addPage('letter','portrait'); pdf.addImage(c.toDataURL('image/jpeg',.95),'JPEG',0,0,612,792);}
     const t=cur().team.name||'Team';save(`${t} Resume.pdf`,pdf.output('blob'));toast('Downloaded the resume PDF.');
   }catch(e){toast('The PDF could not be built. Try again, or remove very large photos.');}
   btn.disabled=false;btn.textContent=label;
