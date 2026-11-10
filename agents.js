@@ -1,7 +1,7 @@
 /*
-  The MARS Team agent list.
-  Every agent here shows up in the CMA Builder's agent dropdown, in this order.
-  The first agent is selected automatically on a new CMA.
+  The MARS Team agent list (Team Resume).
+  Every agent here shows up in the Team Resume's "Agents on this copy" dropdown, in this order.
+  Nobody is selected until a viewer picks themselves.
 
   id     a short unique name with no spaces (used behind the scenes)
   name   as it should print on the CMA
