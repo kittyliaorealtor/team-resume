@@ -19,5 +19,7 @@ window.MARS_AGENTS = [
   { id: 'matthew-kim',        name: 'Matthew Kim',          title: 'Licensed Real Estate Salesperson', phone: '917-545-6123', email: 'matthewkimre@gmail.com',            photo: 'matthew-kim.jpg' },
   { id: 'raquel-vinasco',     name: 'Raquel Vinasco',       title: 'Licensed Real Estate Salesperson', phone: '516-244-1000', email: 'rachelvinas@gmail.com',             photo: 'raquel-vinasco.jpg' },
   { id: 'michael-jaghab',     name: 'Michael Jaghab',       title: 'Licensed Real Estate Salesperson', phone: '516-513-2294', email: 'michaeljaghabrealestate@gmail.com', photo: 'michael-jaghab.jpg' },
-  { id: 'kunal-verma',        name: 'Kunal Verma',          title: 'Licensed Real Estate Salesperson', phone: '646-249-0810', email: 'kunalhomes99@gmail.com',            photo: 'kunal-verma.jpg' }
+  { id: 'kunal-verma',        name: 'Kunal Verma',          title: 'Licensed Real Estate Salesperson', phone: '646-249-0810', email: 'kunalhomes99@gmail.com',            photo: 'kunal-verma.jpg' },
+  { id: 'michael-babayev',    name: 'Michael Babayev',      title: 'Licensed Real Estate Salesperson', phone: '917-936-9733', email: 'michaelbabayev19@gmail.com',        photo: 'michael-babayev.jpg' },
+  { id: 'pauline-clerk',      name: 'Pauline Clerk',        title: 'Licensed Real Estate Salesperson', phone: '516-459-1926', email: 'paulineclerkrealtor@gmail.com',     photo: 'pauline-clerk.jpg' }
 ];
